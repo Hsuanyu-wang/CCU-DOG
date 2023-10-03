@@ -1,0 +1,109 @@
+#include "HUSKYLENS.h"
+#include "SoftwareSerial.h"
+#include <Servo.h>
+Servo rfu;  //宣告伺服馬達物件
+Servo rfd;
+Servo rbu;
+Servo rbd;
+Servo lfu;
+Servo lfd;
+Servo lbu;
+Servo lbd;
+SoftwareSerial mySerial(A0, A1);
+HUSKYLENS huskylens;
+byte seven_seg_digits[10][7] = { 
+{ 1,0,0,1,1,1,1 }, // = 1 // define the LED digit patters, from 0 - 9
+{ 0,0,1,0,0,1,0 }, // = 2 // 0 = LED on, 1 = LED off, in this order:
+{ 0,0,0,0,1,1,0 }, // = 3 //Arduino pin: 2,3,4,5,6,7,8 (Mapping a,b,c,d,e,f,g of Seven-Segment LED)
+{ 1,0,0,1,1,0,0 }, // = 4
+{ 0,1,0,0,1,0,0 }, // = 5
+{ 0,1,0,0,0,0,0 }, // = 6
+{ 0,0,0,1,1,1,1 }, // = 7
+{ 0,0,0,0,0,0,0 }, // = 8
+{ 0,0,0,1,1,0,0 }, // = 9
+{ 0,0,0,0,0,0,1 } // = 0
+};
+void rfuw(int a){
+  rfu.write(a+4);
+}
+
+void rfdw(int a){
+  rfd.write(a-4);
+}
+
+void rbuw(int a){
+  rbu.write(a-4);
+}
+
+void rbdw(int a){
+  rbd.write(a+7);
+}
+
+void lfuw(int a){
+  lfu.write(a+2);
+}
+
+void lfdw(int a){
+  lfd.write(a-2);
+}
+
+void lbuw(int a){
+  lbu.write(a+8);
+}
+
+void lbdw(int a){
+  lbd.write(a-16);
+}
+void setup() {
+  pinMode(2, OUTPUT);  
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
+  pinMode(8, OUTPUT);
+  rfuw(60);
+  rfdw(80);
+  rbuw(60);
+  rbdw(50);
+  lfuw(120);
+  lfdw(100);
+  lbuw(120);
+  lbdw(130);
+  Serial.begin(115200);
+  mySerial.begin(9600);
+  while (!huskylens.begin(mySerial))
+    {
+        Serial.println(F("Begin failed!"));
+        Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
+        Serial.println(F("2.Please recheck the connection."));
+        delay(100);
+    }
+    
+    huskylens.clearCustomText();
+}
+void sevenSegWrite(byte digit) { // 在七段顯示器上顯示指定的一個數字
+byte pin = 2;
+for (byte seg = 0; seg < 7; ++seg) {
+digitalWrite(pin, seven_seg_digits[digit][seg]);
+++pin;
+}
+}
+
+void loop()
+{
+   if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+    else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+    else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
+    else
+    {
+        
+        //Serial.println(F("###########"));
+        while (huskylens.available())
+        {
+            HUSKYLENSResult result = huskylens.read();
+            
+            sevenSegWrite(result.ID-1);
+        }    
+    }
+}
