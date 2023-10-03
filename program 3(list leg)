@@ -1,0 +1,95 @@
+#include <Servo.h>
+Servo rfu;  //宣告伺服馬達物件
+Servo rfd;
+Servo rbu;
+Servo rbd;
+Servo lfu;
+Servo lfd;
+Servo lbu;
+Servo lbd;
+
+void rfuw(int a){
+  rfu.write(a+4);
+}
+
+void rfdw(int a){
+  rfd.write(a-4);
+}
+
+void rbuw(int a){
+  rbu.write(a-4);
+}
+
+void rbdw(int a){
+  rbd.write(a+7);
+}
+
+void lfuw(int a){
+  lfu.write(a+2);
+}
+
+void lfdw(int a){
+  lfd.write(a-2);
+}
+
+void lbuw(int a){
+  lbu.write(a+8);
+}
+
+void lbdw(int a){
+  lbd.write(a-16);
+}
+void setup() {
+  // put your setup code here, to run once:
+  rfu.attach(A5);
+  rfd.attach(A4);
+  rbu.attach(A3);
+  rbd.attach(A2);
+  lfu.attach(10);
+  lfd.attach(11);
+  lbu.attach(12);
+  lbd.attach(13);
+  rfuw(60);
+  rfdw(80);
+  rbuw(60);
+  rbdw(50);
+  lfuw(120);
+  lfdw(100);
+  lbuw(120);
+  lbdw(130);
+delay(10000);
+rfuw(60);
+  rfdw(30);
+  lfuw(160);
+  lfdw(80);
+  lbuw(120);
+  lbdw(150);
+  delay(2000);
+  rfuw(60);
+  rfdw(30);
+  rbuw(10);
+  rbdw(30);
+  lfuw(160);
+  lfdw(80);
+  lbuw(120);
+  lbdw(150);
+  delay(8000);
+  rfuw(60);
+  rfdw(30);
+  lfuw(160);
+  lfdw(80);
+  lbuw(120);
+  lbdw(150);
+  delay(2000);
+  rfuw(60);
+  rfdw(80);
+  rbuw(60);
+  rbdw(50);
+  lfuw(120);
+  lfdw(100);
+  lbuw(120);
+  lbdw(130);
+}
+
+void loop() {
+}
